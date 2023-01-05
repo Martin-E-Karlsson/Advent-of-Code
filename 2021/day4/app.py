@@ -1,5 +1,7 @@
 import numpy as np
 
+possibleBingoRows = [[]]
+
 def read_txt_file(filename):
     with open(filename) as f:
         lines = f.readlines()
@@ -25,18 +27,33 @@ def string_to_int(stringList):
 
 
 def check_bingo_numbers(bingoNumbers, bingoBoards):
-    checkBoards =  np.zeros((5, 5)) * 100
-    print(checkBoards)
-    for number in bingoNumbers:
-        for board in bingoBoards:
-            pass
+    numberOfBoards = len(bingoBoards)
+    checkBoards = [np.zeros((5, 5)) for board in range(numberOfBoards)]
+    for bingoNumber in bingoNumbers:
+        for boardIndex, board in enumerate(bingoBoards):
+            for y, row in enumerate(board):
+                for x, boardNumber in enumerate(row):
+                    if bingoNumber == boardNumber:
+                        # print(bingoNumber, boardNumber, boardIndex)
+                        checkBoards[boardIndex][y][x] = 1
+        bingoFound, winningBoardIndex = check_for_bingo(checkBoards)
+        if bingoFound:
+            break
+    print(checkBoards[0])
+    return winningBoardIndex
+
+def check_for_bingo(checkBoards):
+    for boardIndex, board in enumerate(checkBoards):
+        pass
+    return 0, 0
+
 
 
 
 if __name__=="__main__":
-    bingoData = read_txt_file('day4/data.txt')
+    bingoData = read_txt_file('2021/day4/data.txt')
     bingoData = remove_line_breaks(bingoData)
     bingoNumbers, bingoBoards = separate_bingo_data(bingoData)
     # print(bingoNumbers)
     # print(len(bingoBoards))
-    check_bingo_numbers(bingoNumbers, bingoBoards)
+    winningBoardIndex = check_bingo_numbers(bingoNumbers, bingoBoards)
