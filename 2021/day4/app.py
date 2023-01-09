@@ -1,63 +1,64 @@
 import numpy as np
+from utils import read_txt_file, remove_line_breaks, string_to_int, separate_bingo_data
 
-def read_txt_file(filename):
-    with open(filename) as f:
-        lines = f.readlines()
-    return lines
+BingoData = remove_line_breaks(read_txt_file('2021/day4/data.txt'))
+BingoNumbers, BingoBoards = separate_bingo_data(BingoData)
+CheckBoards = [np.zeros((5, 5)) for board in range(100)]
 
-def remove_line_breaks(bingoData):
-    return [row.replace('\n','') for row in bingoData if row!='\n']
-
-def separate_bingo_data(bingoData):
-    bingoNumbers = string_to_int(bingoData[0].split(','))
-    bingoBoards = []
-    currentBoard = []
-    for row in bingoData[1:]:
-        currentBoard.append(string_to_int(row.split()))
-        if len(currentBoard) >= 5:
-            bingoBoards.append(currentBoard)
-            currentBoard = []
-    return bingoNumbers, bingoBoards
-
-
-def string_to_int(stringList):
-    return [int(string) for string in stringList]
-
-
-def check_bingo_numbers(bingoNumbers, bingoBoards):
-    numberOfBoards = len(bingoBoards)
-    checkBoards = [np.zeros((5, 5)) for board in range(numberOfBoards)]
-    for bingoNumber in bingoNumbers:
-        for boardIndex, board in enumerate(bingoBoards):
+def check_bingo_numbers():
+    winnerFound = False
+    numberOfBoards = len(BingoBoards)
+    for bingoNumber in BingoNumbers:
+        for boardIndex, board in enumerate(BingoBoards):
             for y, row in enumerate(board):
                 for x, boardNumber in enumerate(row):
                     if bingoNumber == boardNumber:
-                        checkBoards[boardIndex][y][x] = 1
-        bingoFound, winningBoardIndex = check_for_bingo(checkBoards)
-        if bingoFound:
-            print("Winning check board")
-            print_matrix(checkBoards[winningBoardIndex])
-            print("Winning bingo board")
-            print_matrix(bingoBoards[winningBoardIndex])
-            return bingoBoards[winningBoardIndex], checkBoards[winningBoardIndex], bingoNumber
+                        CheckBoards[boardIndex][y][x] = 1
+        bingoFound, winningBoardIndexes = check_for_bingo(CheckBoards)
+        for index in sorted(winningBoardIndexes, reverse=True):
+            if bingoFound:
+                if not winnerFound:
+                    print("Winning check board")
+                    print_matrix(CheckBoards[index])
+                    print("Winning bingo board")
+                    print_matrix(BingoBoards[index])
+                    winningBoard =  BingoBoards[index]
+                    winningCheckBoard = CheckBoards[index]
+                    winningNumber = bingoNumber
+                    winnerFound = True
+                if len(BingoBoards) > 1:
+                    del BingoBoards[index]
+                    del CheckBoards[index]
+                else:
+                    print("Losing check board")
+                    print_matrix(CheckBoards[0])
+                    print("Losing bingo board")
+                    print_matrix(BingoBoards[0])
+                    return bingoNumber, winningBoard, winningCheckBoard, winningNumber
+            
 
 def check_for_bingo(checkBoards):
+    WinningBoardIndexes = []
+    bingoFound = False
     for boardIndex, board in enumerate(checkBoards):
         #Check rows
         for row in board:
             if sum(row) >= 5:
-                return True, boardIndex
+                WinningBoardIndexes.append(boardIndex)
+                bingoFound = True
         #Check columns
         columnSumList = [sum(x) for x in zip(*board)]
         for columnSum in columnSumList:
             if columnSum >= 5:
-                return True, boardIndex
-        #Check diagonals
-        mainDiagonalSum = sum([board[i][i] for i in range(5)])
-        antiDiagonalSum = sum([board[4-i][0+i] for i in range(5)])
-        if mainDiagonalSum >= 5 or antiDiagonalSum >= 5:
-            return True, boardIndex
-    return False, boardIndex
+                WinningBoardIndexes.append(boardIndex)
+                bingoFound = True
+        #Check diagonals (APPARENTLY YOU'RE NOT SUPPOSED TO COUNT DIAGONAL LINES)
+        # mainDiagonalSum = sum([board[i][i] for i in range(5)])
+        # antiDiagonalSum = sum([board[4-i][0+i] for i in range(5)])
+        # if mainDiagonalSum >= 5 or antiDiagonalSum >= 5:
+        #     WinningBoardIndexes.append(boardIndex)
+        #     bingoFound = True
+    return bingoFound, WinningBoardIndexes
 
 
 def print_matrix(matrix):
@@ -75,11 +76,8 @@ def get_unmarked_sum(bingoBoard, checkBoard):
 
 
 if __name__=="__main__":
-    bingoData = read_txt_file('2021/day4/data.txt')
-    bingoData = remove_line_breaks(bingoData)
-    bingoNumbers, bingoBoards = separate_bingo_data(bingoData)
-    # print(bingoNumbers)
-    # print(len(bingoBoards))
-    winningBoard, checkBoard, lastCalledNumber = check_bingo_numbers(bingoNumbers, bingoBoards)
-    unmarkedSum = get_unmarked_sum(winningBoard, checkBoard)
-    print("Final Score:", unmarkedSum * lastCalledNumber)
+    lastBingoNumber, winningBoard, winningCheckBoard, winningNumber = check_bingo_numbers()
+    unmarkedWinningSum = get_unmarked_sum(winningBoard, winningCheckBoard)
+    print("Winning Board Score:", unmarkedWinningSum * winningNumber)
+    unmarkedLosingSum = get_unmarked_sum(BingoBoards[0], CheckBoards[0])
+    print("Losing Board Score:", unmarkedLosingSum * lastBingoNumber)
