@@ -1,4 +1,6 @@
 import numpy as np
+import sys
+sys.path.append('/C:/Code/advent_of_code/2021/utils')
 from utils import read_txt_file, remove_line_breaks, string_to_int, separate_bingo_data
 
 BingoData = remove_line_breaks(read_txt_file('2021/day4/data.txt'))
