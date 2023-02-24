@@ -27,25 +27,53 @@ def create_line_matrix(filteredList):
     lineMatrix = np.zeros((1000, 1000))
     for dict in filteredList:
         x1, y1, x2, y2 = dict['x1'], dict['y1'], dict['x2'], dict['y2']
-        print(x1, y1, '->', x2, y2)
+        # print(x1, y1, '->', x2, y2)
+
+        # Horizontal Lines
         if x1 == x2:
             if y1 > y2:
                 for y in range(y2, y1+1):
-                    # print(x1, y)
                     lineMatrix[y][x1] += 1
+                    
             elif y1 < y2:
                 for y in range(y1, y2+1):
-                    # print(x1, y)
                     lineMatrix[y][x1] += 1
+        # Vertical Lines            
         elif y1 == y2:
             if x1 > x2:
                 for x in range(x2, x1+1):
                     lineMatrix[y1][x] += 1
-                    # print(x, y1)
+
             elif x1 < x2:
                 for x in range(x1, x2+1):
-                    # print(x, y1)
                     lineMatrix[y1][x] += 1
+        
+        # Diagonal Lines
+        elif abs(x1-x2) == abs(y1-y2):
+            # Vertically decreasing line
+            if y1 > y2:
+                # Horizontally decreasing line
+                if x1 > x2:
+                    for i in range(x1-x2+1):
+                        lineMatrix[y1-i][x1-i] += 1
+
+                # Horizontally increasing line
+                elif x1 < x2:
+                    for i in range(x2-x1+1):
+                        lineMatrix[y1-i][x1+i] += 1
+            
+            # Vertically increasing line
+            elif y1 < y2:
+                # Horizontally decreasing line
+                if x1 > x2:
+                    for i in range(x1-x2+1):
+                        lineMatrix[y1+i][x1-i] += 1
+                
+                # Horizontally increasing line
+                elif x1 < x2:
+                    for i in range(x2-x1+1):
+                        lineMatrix[y1+i][x1+i] += 1
+            # print(x1, y1, '->', x2, y2)
     return lineMatrix
 
 
@@ -61,10 +89,9 @@ def count_danger_zones(lineMatrix):
 if __name__=="__main__":
     lineDictList = line_list_to_dict(LineData)
     # print(lineDictList)
-    filteredList = remove_diagonal_lines(lineDictList)
+    # filteredList = remove_diagonal_lines(lineDictList)
     # print(filteredList)
-    lineMatrix = create_line_matrix(filteredList)
+    lineMatrix = create_line_matrix(lineDictList)
     # print(lineMatrix)
     numberOfDangerZones = count_danger_zones(lineMatrix)
     print(f"There are {numberOfDangerZones} dangerous areas!")
-
