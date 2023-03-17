@@ -1,4 +1,3 @@
-import numpy as np
 import sys
 sys.path.append('C:/Code/Advent-of-Code/2021/utils')
 from utils import read_txt_file, string_to_int
@@ -37,8 +36,8 @@ if __name__=="__main__":
     stop = timeit.default_timer()
     print(sorted(diffTotalList)[0])
     print('Time: ', stop - start)
-    start = timeit.default_timer() 
-    diffTotalList = [calculate_total_acceleration_difference_slow(positionList, target) for target in range(positionList[0], positionList[-1]+1)]    
-    stop = timeit.default_timer()
-    print(sorted(diffTotalList)[0])
-    print('Time: ', stop - start)
+    # start = timeit.default_timer() 
+    # diffTotalList = [calculate_total_acceleration_difference_slow(positionList, target) for target in range(positionList[0], positionList[-1]+1)]    
+    # stop = timeit.default_timer()
+    # print(sorted(diffTotalList)[0])
+    # print('Time: ', stop - start)
