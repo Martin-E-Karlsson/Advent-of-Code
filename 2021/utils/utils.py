@@ -11,6 +11,12 @@ def remove_line_breaks(bingoData):
 def string_to_int(stringList):
     return [int(string) for string in stringList]
 
+def string_to_int_list(string:str):
+    return [int(number) for number in string]
+
+def string_list_to_int_matrix(stringList):
+    return [string_to_int_list(string) for string in stringList]
+
 
 def separate_bingo_data(bingoData):
     bingoNumbers = string_to_int(bingoData[0].split(','))
