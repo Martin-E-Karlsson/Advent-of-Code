@@ -10,9 +10,17 @@ class Octopi:
     def __init__(self, eMatrix):
         self.eMatrix = eMatrix
         self.flashes = 0 
+        self.currentStep = 0
+        self.fullFlashStep = 0
+
+    def find_first_full_flash(self):
+        while self.fullFlashStep == 0:
+            self.currentStep += 1
+            self.increase_energy_levels()
 
     def increase_energy_levels_repeatedly(self, repeats):
         for _ in range(repeats):
+            self.currentStep += 1
             self.increase_energy_levels()
 
     def increase_energy_levels(self):
@@ -21,7 +29,7 @@ class Octopi:
         for y, row in enumerate(self.eMatrix):
             for x, pos in enumerate(row):
                 self.eMatrix[y][x] += 1
-        
+
         # print('------------------------------------------------------------------------------------------------------------')
         # print('After +1 increase')
         # print(self.eMatrix)
@@ -45,6 +53,13 @@ class Octopi:
             for x, pos in enumerate(row):
                 if self.eMatrix[y][x] > 9:
                     self.eMatrix[y][x] = 0
+
+        # print(self.currentStep)
+        # print(self.eMatrix.sum())
+        # print(self.eMatrix)
+        
+        if self.eMatrix.sum() == 0:
+            self.fullFlashStep = self.currentStep
     
     def flashPosition(self, x, y):
 
@@ -73,5 +88,6 @@ class Octopi:
 
 if __name__=='__main__':
     octopi = Octopi(Data)
-    octopi.increase_energy_levels_repeatedly(100)
-    print(octopi.flashes)
+    # octopi.increase_energy_levels_repeatedly(100)
+    octopi.find_first_full_flash()
+    print(octopi.fullFlashStep)
