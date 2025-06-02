@@ -65,5 +65,3 @@ if __name__=="__main__":
     dataList = [[int(number) for number in row.split()] for row in dataString.split('\n')]
     print(dataList)
     print(summarize_reports(dataList))
-
-
