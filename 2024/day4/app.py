@@ -72,11 +72,7 @@ def find_number_of_xMas(matrix):
                         neDiagonal = ''.join(sorted(matrix[y+1][x-1] + matrix[y-1][x+1]))
                         if seDiagonal == 'MS' and neDiagonal == 'MS':
                             xMasTotal += 1
-    return xMasTotal
-
-
-                    
-                    
+    return xMasTotal             
 
 
 if __name__ == "__main__":
